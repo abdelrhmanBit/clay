@@ -323,18 +323,24 @@ if (!fs.existsSync(`./${global.authFile}/creds.json`)) {
 
           const waitForSocketOpen = () => new Promise((resolve) => {
             if (isSocketOpen()) return resolve(true);
-            const start = Date.now();
-            const interval = setInterval(() => {
-              if (isSocketOpen()) {
-                clearInterval(interval);
+            let settled = false;
+            const onUpdate = (update) => {
+              if (update.connection === 'open') {
+                cleanup();
                 resolve(true);
-                return;
               }
-              if (Date.now() - start >= socketWaitTimeout) {
-                clearInterval(interval);
-                resolve(false);
-              }
-            }, 500);
+            };
+            const timeout = setTimeout(() => {
+              cleanup();
+              resolve(false);
+            }, socketWaitTimeout);
+            const cleanup = () => {
+              if (settled) return;
+              settled = true;
+              clearTimeout(timeout);
+              global.conn?.ev?.off('connection.update', onUpdate);
+            };
+            global.conn?.ev?.on('connection.update', onUpdate);
           });
 
           async function requestPairing() {
