@@ -1,0 +1,24 @@
+{
+"urls": {
+"api": {
+"theend": "https://the-end-api.vercel.app/allapis",
+},
+"json": {
+"country": "https://drive.google.com/uc?export=download&id=18AjWHXAfMw0vroZYxtYsXdtzeOxiJTTt",
+},
+"media": {
+"images": {
+"menu": '',
+"channel": [ 
+'https://files.catbox.moe/pi2y2v.jpg', 
+'https://files.catbox.moe/pi2y2v.jpg', 
+'https://files.catbox.moe/pi2y2v.jpg', 
+'https://files.catbox.moe/pi2y2v.jpg', 
+'https://files.catbox.moe/pi2y2v.jpg', 
+'https://files.catbox.moe/pi2y2v.jpg'
+],
+
+},
+},
+},
+}

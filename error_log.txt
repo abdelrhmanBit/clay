@@ -1,0 +1,54 @@
+2026-02-03T17:07:04.586Z - Unhandled Rejection: Error: Connection Closed
+    at sendRawMessage (C:\Users\abdo\Downloads\Bot\node_modules\@whiskeysockets\baileys\lib\Socket\socket.js:65:19)
+    at sendNode (C:\Users\abdo\Downloads\Bot\node_modules\@whiskeysockets\baileys\lib\Socket\socket.js:83:16)
+    at Object.requestPairingCode (C:\Users\abdo\Downloads\Bot\node_modules\@whiskeysockets\baileys\lib\Socket\socket.js:430:15)
+    at Timeout._onTimeout (file:///C:/Users/abdo/Downloads/Bot/main.js:301:22) {
+  data: null,
+  isBoom: true,
+  isServer: false,
+  output: {
+    statusCode: 428,
+    payload: {
+      statusCode: 428,
+      error: 'Precondition Required',
+      message: 'Connection Closed'
+    },
+    headers: {}
+  }
+}
+2026-02-03T17:08:37.662Z - Unhandled Rejection: Error: Connection Closed
+    at sendRawMessage (C:\Users\abdo\Downloads\Bot\node_modules\@whiskeysockets\baileys\lib\Socket\socket.js:65:19)
+    at sendNode (C:\Users\abdo\Downloads\Bot\node_modules\@whiskeysockets\baileys\lib\Socket\socket.js:83:16)
+    at Object.requestPairingCode (C:\Users\abdo\Downloads\Bot\node_modules\@whiskeysockets\baileys\lib\Socket\socket.js:430:15)
+    at Timeout._onTimeout (file:///C:/Users/abdo/Downloads/Bot/main.js:301:22) {
+  data: null,
+  isBoom: true,
+  isServer: false,
+  output: {
+    statusCode: 428,
+    payload: {
+      statusCode: 428,
+      error: 'Precondition Required',
+      message: 'Connection Closed'
+    },
+    headers: {}
+  }
+}
+2026-02-03T17:39:14.648Z - Unhandled Rejection: Error: Connection Closed
+    at sendRawMessage (C:\Users\abdo\Downloads\Bot\node_modules\@whiskeysockets\baileys\lib\Socket\socket.js:65:19)
+    at sendNode (C:\Users\abdo\Downloads\Bot\node_modules\@whiskeysockets\baileys\lib\Socket\socket.js:83:16)
+    at Object.requestPairingCode (C:\Users\abdo\Downloads\Bot\node_modules\@whiskeysockets\baileys\lib\Socket\socket.js:430:15)
+    at Timeout._onTimeout (file:///C:/Users/abdo/Downloads/Bot/main.js:301:22) {
+  data: null,
+  isBoom: true,
+  isServer: false,
+  output: {
+    statusCode: 428,
+    payload: {
+      statusCode: 428,
+      error: 'Precondition Required',
+      message: 'Connection Closed'
+    },
+    headers: {}
+  }
+}
