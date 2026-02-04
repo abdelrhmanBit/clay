@@ -302,35 +302,49 @@ if (!fs.existsSync(`./${global.authFile}/creds.json`)) {
       }
 
       setTimeout(async () => {
-        // Purge session files if we are not registered and about to request a code
-        // This ensures a clean slate for the pairing process
         try {
-          let directorio = fs.readdirSync(`./${global.authFile}`)
-          directorio.forEach(file => {
-            if (file !== 'creds.json') fs.unlinkSync(`./${global.authFile}/${file}`)
-          })
-        } catch (e) { }
-
-        let attempts = 0;
-        const maxAttempts = 3;
-        const retryDelay = 7000;
-
-        async function requestPairing() {
-          if (global.conn.authState.creds.registered) return;
+          // Purge session files if we are not registered and about to request a code
+          // This ensures a clean slate for the pairing process
           try {
-            let codigo = await global.conn.requestPairingCode(numeroTelefono)
-            codigo = codigo?.match(/.{1,4}/g)?.join("-") || codigo
-            console.log(chalk.yellowBright.bold('\n┌─────〘 Use Code Linked To WhatsApp 〙─────────┈ ⳹\n') + chalk.yellowBright.bold('│✑ Code : ') + chalk.white.bold(codigo + '\n') + chalk.yellowBright.bold('└────────────────┈ ⳹\n\n'))
-          } catch (e) {
-            attempts++;
-            console.error(chalk.red(`[Pairing Error] Attempt ${attempts} failed: ${e.message}`));
-            if (attempts < maxAttempts && !global.conn.authState.creds.registered) {
-              console.log(chalk.yellow(`Retrying in ${retryDelay / 1000}s...`));
-              setTimeout(requestPairing, retryDelay);
+            let directorio = fs.readdirSync(`./${global.authFile}`)
+            directorio.forEach(file => {
+              if (file !== 'creds.json') fs.unlinkSync(`./${global.authFile}/${file}`)
+            })
+          } catch (e) { }
+
+          let attempts = 0;
+          const maxAttempts = 3;
+          const retryDelay = 7000;
+
+          const isSocketOpen = () => global.conn?.ws?.readyState === 1;
+
+          async function requestPairing() {
+            if (global.conn.authState.creds.registered) return;
+            if (!isSocketOpen()) {
+              attempts++;
+              console.warn(chalk.yellow(`[Pairing] Connection not ready. Attempt ${attempts} of ${maxAttempts}.`));
+              if (attempts < maxAttempts) {
+                setTimeout(requestPairing, retryDelay);
+              }
+              return;
+            }
+            try {
+              let codigo = await global.conn.requestPairingCode(numeroTelefono)
+              codigo = codigo?.match(/.{1,4}/g)?.join("-") || codigo
+              console.log(chalk.yellowBright.bold('\n┌─────〘 Use Code Linked To WhatsApp 〙─────────┈ ⳹\n') + chalk.yellowBright.bold('│✑ Code : ') + chalk.white.bold(codigo + '\n') + chalk.yellowBright.bold('└────────────────┈ ⳹\n\n'))
+            } catch (e) {
+              attempts++;
+              console.error(chalk.red(`[Pairing Error] Attempt ${attempts} failed: ${e.message}`));
+              if (attempts < maxAttempts && !global.conn.authState.creds.registered) {
+                console.log(chalk.yellow(`Retrying in ${retryDelay / 1000}s...`));
+                setTimeout(requestPairing, retryDelay);
+              }
             }
           }
+          await requestPairing();
+        } catch (e) {
+          console.error(chalk.red(`[Pairing Error] Unexpected error: ${e.message}`));
         }
-        await requestPairing();
       }, 5000)
 
     }
