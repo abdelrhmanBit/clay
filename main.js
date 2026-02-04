@@ -324,22 +324,28 @@ if (!fs.existsSync(`./${global.authFile}/creds.json`)) {
           const waitForSocketOpen = () => new Promise((resolve) => {
             if (isSocketOpen()) return resolve(true);
             let settled = false;
-            const onUpdate = (update) => {
-              if (update.connection === 'open') {
-                cleanup();
-                resolve(true);
-              }
-            };
-            const timeout = setTimeout(() => {
-              cleanup();
-              resolve(false);
-            }, socketWaitTimeout);
-            const cleanup = () => {
+            const resolveWith = (value) => {
               if (settled) return;
               settled = true;
               clearTimeout(timeout);
               global.conn?.ev?.off('connection.update', onUpdate);
+              resolve(value);
             };
+            const onUpdate = (update) => {
+              if (update.connection === 'open') {
+                if (isSocketOpen()) {
+                  resolveWith(true);
+                } else {
+                  setTimeout(() => {
+                    if (isSocketOpen()) resolveWith(true);
+                  }, 250);
+                }
+              }
+              if (update.connection === 'close') {
+                resolveWith(false);
+              }
+            };
+            const timeout = setTimeout(() => resolveWith(isSocketOpen()), socketWaitTimeout);
             global.conn?.ev?.on('connection.update', onUpdate);
           });
 
