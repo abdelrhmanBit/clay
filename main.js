@@ -313,17 +313,37 @@ if (!fs.existsSync(`./${global.authFile}/creds.json`)) {
           } catch (e) { }
 
           let attempts = 0;
+          let waits = 0;
           const maxAttempts = 3;
+          const maxWaits = 5;
           const retryDelay = 7000;
+          const socketWaitTimeout = 5000;
 
           const isSocketOpen = () => global.conn?.ws?.readyState === 1;
 
+          const waitForSocketOpen = () => new Promise((resolve) => {
+            if (isSocketOpen()) return resolve(true);
+            const start = Date.now();
+            const interval = setInterval(() => {
+              if (isSocketOpen()) {
+                clearInterval(interval);
+                resolve(true);
+                return;
+              }
+              if (Date.now() - start >= socketWaitTimeout) {
+                clearInterval(interval);
+                resolve(false);
+              }
+            }, 500);
+          });
+
           async function requestPairing() {
             if (global.conn.authState.creds.registered) return;
-            if (!isSocketOpen()) {
-              attempts++;
-              console.warn(chalk.yellow(`[Pairing] Connection not ready. Attempt ${attempts} of ${maxAttempts}.`));
-              if (attempts < maxAttempts) {
+            const ready = await waitForSocketOpen();
+            if (!ready) {
+              waits++;
+              console.warn(chalk.yellow(`[Pairing] Connection not ready. Wait ${waits} of ${maxWaits}.`));
+              if (waits < maxWaits) {
                 setTimeout(requestPairing, retryDelay);
               }
               return;
